@@ -1,11 +1,9 @@
 package com.v2ray.ang.util
 
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.v2ray.ang.AppConfig
-import com.v2ray.ang.service.V2RayTestService
 import java.io.Serializable
 
 object MessageUtil {
@@ -41,15 +39,6 @@ object MessageUtil {
      * @param content The message content.
      */
     fun sendMsg2TestService(ctx: Context, what: Int, content: Serializable) {
-        try {
-            val intent = Intent()
-            intent.component = ComponentName(ctx, V2RayTestService::class.java)
-            intent.putExtra("key", what)
-            intent.putExtra("content", content)
-            ctx.startService(intent)
-        } catch (e: Exception) {
-            Log.e(AppConfig.TAG, "Failed to send message to test service", e)
-        }
     }
 
     /**

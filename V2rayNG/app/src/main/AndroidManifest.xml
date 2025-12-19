@@ -181,11 +181,6 @@
                 android:value="proxy" />
         </service>
 
-        <service
-            android:name=".service.V2RayTestService"
-            android:exported="false"
-            android:process=":RunSoLibV2RayDaemon" />
-
         <receiver
             android:name=".receiver.WidgetProvider"
             android:exported="true"

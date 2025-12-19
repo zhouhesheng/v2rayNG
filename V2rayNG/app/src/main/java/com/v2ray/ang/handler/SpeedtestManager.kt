@@ -11,7 +11,6 @@ import com.v2ray.ang.extension.responseLength
 import com.v2ray.ang.util.HttpUtil
 import com.v2ray.ang.util.JsonUtil
 import kotlinx.coroutines.isActive
-import libv2ray.Libv2ray
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Socket
@@ -50,12 +49,7 @@ object SpeedtestManager {
      * @return The ping time in milliseconds, or -1 if the ping failed.
      */
     fun realPing(config: String): Long {
-        return try {
-            Libv2ray.measureOutboundDelay(config, SettingsManager.getDelayTestUrl())
-        } catch (e: Exception) {
-            Log.e(AppConfig.TAG, "Failed to measure outbound delay", e)
-            -1L
-        }
+        return -1L
     }
 
     /**
@@ -183,7 +177,7 @@ object SpeedtestManager {
      * @return The version of the V2Ray library.
      */
     fun getLibVersion(): String {
-        return Libv2ray.checkVersionX()
+        return "0.0"
     }
 
 }
