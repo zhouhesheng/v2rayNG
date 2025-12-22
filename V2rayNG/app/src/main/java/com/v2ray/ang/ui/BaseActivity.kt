@@ -40,7 +40,12 @@ abstract class BaseActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun attachBaseContext(newBase: Context?) {
-        super.attachBaseContext(MyContextWrapper.wrap(newBase ?: return, SettingsManager.getLocale()))
+        super.attachBaseContext(
+            MyContextWrapper.wrap(
+                newBase ?: return,
+                SettingsManager.getLocale()
+            )
+        )
     }
 
     /**
@@ -51,7 +56,12 @@ abstract class BaseActivity : AppCompatActivity() {
      * @param drawableResId The resource ID of the drawable to be used as the divider.
      * @param orientation   The orientation of the divider (DividerItemDecoration.VERTICAL or DividerItemDecoration.HORIZONTAL).
      */
-    fun addCustomDividerToRecyclerView(recyclerView: RecyclerView, context: Context?, drawableResId: Int, orientation: Int = DividerItemDecoration.VERTICAL) {
+    fun addCustomDividerToRecyclerView(
+        recyclerView: RecyclerView,
+        context: Context?,
+        drawableResId: Int,
+        orientation: Int = DividerItemDecoration.VERTICAL
+    ) {
         // Get the drawable from resources
         val drawable = ContextCompat.getDrawable(context!!, drawableResId)
         requireNotNull(drawable) { "Drawable resource not found" }

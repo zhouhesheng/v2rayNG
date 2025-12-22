@@ -131,7 +131,9 @@ object SpeedtestManager {
         var result: String
         var elapsed = -1L
 
-        val conn = HttpUtil.createProxyConnection(SettingsManager.getDelayTestUrl(), port, 15000, 15000) ?: return Pair(elapsed, "")
+        val conn =
+            HttpUtil.createProxyConnection(SettingsManager.getDelayTestUrl(), port, 15000, 15000)
+                ?: return Pair(elapsed, "")
         try {
             val start = SystemClock.elapsedRealtime()
             val code = conn.responseCode
@@ -162,11 +164,11 @@ object SpeedtestManager {
 
     fun getRemoteIPInfo(): String? {
         val httpPort = SettingsManager.getHttpPort()
-        var content = HttpUtil.getUrlContent(AppConfig.IP_API_URL, 5000, httpPort) ?: return null
+        val content = HttpUtil.getUrlContent(AppConfig.IP_API_URL, 5000, httpPort) ?: return null
 
-        var ipInfo = JsonUtil.fromJson(content, IPAPIInfo::class.java) ?: return null
-        var ip = ipInfo.ip ?: ipInfo.clientIp ?: ipInfo.ip_addr ?: ipInfo.query
-        var country = ipInfo.country_code ?: ipInfo.country ?: ipInfo.countryCode
+        val ipInfo = JsonUtil.fromJson(content, IPAPIInfo::class.java) ?: return null
+        val ip = ipInfo.ip ?: ipInfo.clientIp ?: ipInfo.ip_addr ?: ipInfo.query
+        val country = ipInfo.country_code ?: ipInfo.country ?: ipInfo.countryCode
 
         return "(${country ?: "unknown"}) $ip"
     }
@@ -177,7 +179,7 @@ object SpeedtestManager {
      * @return The version of the V2Ray library.
      */
     fun getLibVersion(): String {
-        return "0.0"
+        return "Hysteria2 Only"
     }
 
 }

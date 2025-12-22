@@ -1,13 +1,8 @@
 package com.v2ray.ang.handler
 
 import com.tencent.mmkv.MMKV
-import com.v2ray.ang.AppConfig.PREF_IS_BOOTED
-import com.v2ray.ang.AppConfig.PREF_ROUTING_RULESET
-import com.v2ray.ang.dto.AssetUrlItem
 import com.v2ray.ang.dto.ProfileItem
-import com.v2ray.ang.dto.RulesetItem
 import com.v2ray.ang.dto.ServerAffiliationInfo
-import com.v2ray.ang.dto.SubscriptionItem
 import com.v2ray.ang.util.JsonUtil
 import com.v2ray.ang.util.Utils
 
@@ -29,11 +24,14 @@ object MmkvManager {
 
     //private val profileStorage by lazy { MMKV.mmkvWithID(ID_PROFILE_CONFIG, MMKV.MULTI_PROCESS_MODE) }
     private val mainStorage by lazy { MMKV.mmkvWithID(ID_MAIN, MMKV.MULTI_PROCESS_MODE) }
-    private val profileFullStorage by lazy { MMKV.mmkvWithID(ID_PROFILE_FULL_CONFIG, MMKV.MULTI_PROCESS_MODE) }
+    private val profileFullStorage by lazy {
+        MMKV.mmkvWithID(
+            ID_PROFILE_FULL_CONFIG,
+            MMKV.MULTI_PROCESS_MODE
+        )
+    }
     private val serverRawStorage by lazy { MMKV.mmkvWithID(ID_SERVER_RAW, MMKV.MULTI_PROCESS_MODE) }
     private val serverAffStorage by lazy { MMKV.mmkvWithID(ID_SERVER_AFF, MMKV.MULTI_PROCESS_MODE) }
-    private val subStorage by lazy { MMKV.mmkvWithID(ID_SUB, MMKV.MULTI_PROCESS_MODE) }
-    private val assetStorage by lazy { MMKV.mmkvWithID(ID_ASSET, MMKV.MULTI_PROCESS_MODE) }
     private val settingsStorage by lazy { MMKV.mmkvWithID(ID_SETTING, MMKV.MULTI_PROCESS_MODE) }
 
     //endregion
@@ -98,17 +96,6 @@ object MmkvManager {
         return JsonUtil.fromJson(json, ProfileItem::class.java)
     }
 
-//    fun decodeProfileConfig(guid: String): ProfileLiteItem? {
-//        if (guid.isBlank()) {
-//            return null
-//        }
-//        val json = profileStorage.decodeString(guid)
-//        if (json.isNullOrBlank()) {
-//            return null
-//        }
-//        return JsonUtil.fromJson(json, ProfileLiteItem::class.java)
-//    }
-
     /**
      * Encodes the server configuration.
      *
@@ -127,14 +114,7 @@ object MmkvManager {
                 mainStorage.encode(KEY_SELECTED_SERVER, key)
             }
         }
-//        val profile = ProfileLiteItem(
-//            configType = config.configType,
-//            subscriptionId = config.subscriptionId,
-//            remarks = config.remarks,
-//            server = config.getProxyOutbound()?.getServerAddress(),
-//            serverPort = config.getProxyOutbound()?.getServerPort(),
-//        )
-//        profileStorage.encode(key, JsonUtil.toJson(profile))
+
         return key
     }
 
@@ -154,27 +134,9 @@ object MmkvManager {
         serverList.remove(guid)
         encodeServerList(serverList)
         profileFullStorage.remove(guid)
-        //profileStorage.remove(guid)
         serverAffStorage.remove(guid)
     }
 
-    /**
-     * Removes the server configurations via subscription ID.
-     *
-     * @param subid The subscription ID.
-     */
-    fun removeServerViaSubid(subid: String) {
-        if (subid.isBlank()) {
-            return
-        }
-        profileFullStorage.allKeys()?.forEach { key ->
-            decodeServerConfig(key)?.let { config ->
-                if (config.subscriptionId == subid) {
-                    removeServer(key)
-                }
-            }
-        }
-    }
 
     /**
      * Decodes the server affiliation information.
@@ -209,20 +171,6 @@ object MmkvManager {
     }
 
     /**
-     * Clears all test delay results.
-     *
-     * @param keys The list of server GUIDs.
-     */
-    fun clearAllTestDelayResults(keys: List<String>?) {
-        keys?.forEach { key ->
-            decodeServerAffiliationInfo(key)?.let { aff ->
-                aff.testDelayMillis = 0
-                serverAffStorage.encode(key, JsonUtil.toJson(aff))
-            }
-        }
-    }
-
-    /**
      * Removes all server configurations.
      *
      * @return The number of server configurations removed.
@@ -231,36 +179,7 @@ object MmkvManager {
         val count = profileFullStorage.allKeys()?.count() ?: 0
         mainStorage.clearAll()
         profileFullStorage.clearAll()
-        //profileStorage.clearAll()
         serverAffStorage.clearAll()
-        return count
-    }
-
-    /**
-     * Removes invalid server configurations.
-     *
-     * @param guid The server GUID.
-     * @return The number of server configurations removed.
-     */
-    fun removeInvalidServer(guid: String): Int {
-        var count = 0
-        if (guid.isNotEmpty()) {
-            decodeServerAffiliationInfo(guid)?.let { aff ->
-                if (aff.testDelayMillis < 0L) {
-                    removeServer(guid)
-                    count++
-                }
-            }
-        } else {
-            serverAffStorage.allKeys()?.forEach { key ->
-                decodeServerAffiliationInfo(key)?.let { aff ->
-                    if (aff.testDelayMillis < 0L) {
-                        removeServer(key)
-                        count++
-                    }
-                }
-            }
-        }
         return count
     }
 
@@ -286,184 +205,6 @@ object MmkvManager {
 
     //endregion
 
-    //region Subscriptions
-
-    /**
-     * Initializes the subscription list.
-     */
-    private fun initSubsList() {
-        val subsList = decodeSubsList()
-        if (subsList.isNotEmpty()) {
-            return
-        }
-        subStorage.allKeys()?.forEach { key ->
-            subsList.add(key)
-        }
-        encodeSubsList(subsList)
-    }
-
-    /**
-     * Decodes the subscriptions.
-     *
-     * @return The list of subscriptions.
-     */
-    fun decodeSubscriptions(): List<Pair<String, SubscriptionItem>> {
-        initSubsList()
-
-        val subscriptions = mutableListOf<Pair<String, SubscriptionItem>>()
-        decodeSubsList().forEach { key ->
-            val json = subStorage.decodeString(key)
-            if (!json.isNullOrBlank()) {
-                subscriptions.add(Pair(key, JsonUtil.fromJson(json, SubscriptionItem::class.java)))
-            }
-        }
-        return subscriptions
-    }
-
-    /**
-     * Removes the subscription.
-     *
-     * @param subid The subscription ID.
-     */
-    fun removeSubscription(subid: String) {
-        subStorage.remove(subid)
-        val subsList = decodeSubsList()
-        subsList.remove(subid)
-        encodeSubsList(subsList)
-
-        removeServerViaSubid(subid)
-    }
-
-    /**
-     * Encodes the subscription.
-     *
-     * @param guid The subscription GUID.
-     * @param subItem The subscription item.
-     */
-    fun encodeSubscription(guid: String, subItem: SubscriptionItem) {
-        val key = guid.ifBlank { Utils.getUuid() }
-        subStorage.encode(key, JsonUtil.toJson(subItem))
-
-        val subsList = decodeSubsList()
-        if (!subsList.contains(key)) {
-            subsList.add(key)
-            encodeSubsList(subsList)
-        }
-    }
-
-    /**
-     * Decodes the subscription.
-     *
-     * @param subscriptionId The subscription ID.
-     * @return The subscription item.
-     */
-    fun decodeSubscription(subscriptionId: String): SubscriptionItem? {
-        val json = subStorage.decodeString(subscriptionId) ?: return null
-        return JsonUtil.fromJson(json, SubscriptionItem::class.java)
-    }
-
-    /**
-     * Encodes the subscription list.
-     *
-     * @param subsList The list of subscription IDs.
-     */
-    fun encodeSubsList(subsList: MutableList<String>) {
-        mainStorage.encode(KEY_SUB_IDS, JsonUtil.toJson(subsList))
-    }
-
-    /**
-     * Decodes the subscription list.
-     *
-     * @return The list of subscription IDs.
-     */
-    fun decodeSubsList(): MutableList<String> {
-        val json = mainStorage.decodeString(KEY_SUB_IDS)
-        return if (json.isNullOrBlank()) {
-            mutableListOf()
-        } else {
-            JsonUtil.fromJson(json, Array<String>::class.java).toMutableList()
-        }
-    }
-
-    //endregion
-
-    //region Asset
-
-    /**
-     * Decodes the asset URLs.
-     *
-     * @return The list of asset URLs.
-     */
-    fun decodeAssetUrls(): List<Pair<String, AssetUrlItem>> {
-        val assetUrlItems = mutableListOf<Pair<String, AssetUrlItem>>()
-        assetStorage.allKeys()?.forEach { key ->
-            val json = assetStorage.decodeString(key)
-            if (!json.isNullOrBlank()) {
-                assetUrlItems.add(Pair(key, JsonUtil.fromJson(json, AssetUrlItem::class.java)))
-            }
-        }
-        return assetUrlItems.sortedBy { (_, value) -> value.addedTime }
-    }
-
-    /**
-     * Removes the asset URL.
-     *
-     * @param assetid The asset ID.
-     */
-    fun removeAssetUrl(assetid: String) {
-        assetStorage.remove(assetid)
-    }
-
-    /**
-     * Encodes the asset.
-     *
-     * @param assetid The asset ID.
-     * @param assetItem The asset item.
-     */
-    fun encodeAsset(assetid: String, assetItem: AssetUrlItem) {
-        val key = assetid.ifBlank { Utils.getUuid() }
-        assetStorage.encode(key, JsonUtil.toJson(assetItem))
-    }
-
-    /**
-     * Decodes the asset.
-     *
-     * @param assetid The asset ID.
-     * @return The asset item.
-     */
-    fun decodeAsset(assetid: String): AssetUrlItem? {
-        val json = assetStorage.decodeString(assetid) ?: return null
-        return JsonUtil.fromJson(json, AssetUrlItem::class.java)
-    }
-
-    //endregion
-
-    //region Routing
-
-    /**
-     * Decodes the routing rulesets.
-     *
-     * @return The list of routing rulesets.
-     */
-    fun decodeRoutingRulesets(): MutableList<RulesetItem>? {
-        val ruleset = settingsStorage.decodeString(PREF_ROUTING_RULESET)
-        if (ruleset.isNullOrEmpty()) return null
-        return JsonUtil.fromJson(ruleset, Array<RulesetItem>::class.java).toMutableList()
-    }
-
-    /**
-     * Encodes the routing rulesets.
-     *
-     * @param rulesetList The list of routing rulesets.
-     */
-    fun encodeRoutingRulesets(rulesetList: MutableList<RulesetItem>?) {
-        if (rulesetList.isNullOrEmpty())
-            encodeSettings(PREF_ROUTING_RULESET, "")
-        else
-            encodeSettings(PREF_ROUTING_RULESET, JsonUtil.toJson(rulesetList))
-    }
-
-    //endregion
 
     /**
      * Encodes the settings.
@@ -563,26 +304,5 @@ object MmkvManager {
 
     //endregion
 
-    //region Others
-
-    /**
-     * Encodes the start on boot setting.
-     *
-     * @param startOnBoot Whether to start on boot.
-     */
-    fun encodeStartOnBoot(startOnBoot: Boolean) {
-        encodeSettings(PREF_IS_BOOTED, startOnBoot)
-    }
-
-    /**
-     * Decodes the start on boot setting.
-     *
-     * @return Whether to start on boot.
-     */
-    fun decodeStartOnBoot(): Boolean {
-        return decodeSettingsBool(PREF_IS_BOOTED, false)
-    }
-
-    //endregion
 
 }

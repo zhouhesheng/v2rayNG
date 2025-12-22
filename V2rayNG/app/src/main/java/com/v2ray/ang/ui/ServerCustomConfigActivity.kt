@@ -83,9 +83,11 @@ class ServerCustomConfigActivity : BaseActivity() {
             return false
         }
 
-        val config = MmkvManager.decodeServerConfig(editGuid) ?: ProfileItem.create(EConfigType.CUSTOM)
+        val config =
+            MmkvManager.decodeServerConfig(editGuid) ?: ProfileItem.create(EConfigType.CUSTOM)
         binding.etRemarks.text.let {
-            config.remarks = if (it.isNullOrEmpty()) profileItem?.remarks.orEmpty() else it.toString()
+            config.remarks =
+                if (it.isNullOrEmpty()) profileItem?.remarks.orEmpty() else it.toString()
         }
         config.server = profileItem?.server
         config.serverPort = profileItem?.serverPort

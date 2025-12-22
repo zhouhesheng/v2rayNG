@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import com.tencent.mmkv.MMKV
 import com.v2ray.ang.AppConfig
 import com.v2ray.ang.BuildConfig
@@ -16,7 +15,6 @@ import com.v2ray.ang.databinding.ActivityAboutBinding
 import com.v2ray.ang.extension.toast
 import com.v2ray.ang.extension.toastError
 import com.v2ray.ang.extension.toastSuccess
-import com.v2ray.ang.handler.MmkvManager
 import com.v2ray.ang.handler.SpeedtestManager
 import com.v2ray.ang.util.Utils
 import com.v2ray.ang.util.ZipUtil
@@ -59,26 +57,6 @@ class AboutActivity : BaseActivity() {
             }
         }
 
-        binding.layoutShare.setOnClickListener {
-            val ret = backupConfiguration(cacheDir.absolutePath)
-            if (ret.first) {
-                startActivity(
-                    Intent.createChooser(
-                        Intent(Intent.ACTION_SEND).setType("application/zip")
-                            .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                            .putExtra(
-                                Intent.EXTRA_STREAM,
-                                FileProvider.getUriForFile(
-                                    this, BuildConfig.APPLICATION_ID + ".cache", File(ret.second)
-                                )
-                            ), getString(R.string.title_configuration_share)
-                    )
-                )
-            } else {
-                toastError(R.string.toast_failure)
-            }
-        }
-
         binding.layoutRestore.setOnClickListener {
             val permission =
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -87,7 +65,11 @@ class AboutActivity : BaseActivity() {
                     Manifest.permission.READ_EXTERNAL_STORAGE
                 }
 
-            if (ContextCompat.checkSelfPermission(this, permission) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    permission
+                ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+            ) {
                 try {
                     showFileChooser()
                 } catch (e: Exception) {
@@ -102,9 +84,7 @@ class AboutActivity : BaseActivity() {
             Utils.openUri(this, AppConfig.APP_URL)
         }
 
-        binding.layoutFeedback.setOnClickListener {
-            Utils.openUri(this, AppConfig.APP_ISSUES_URL)
-        }
+
 
         binding.layoutOssLicenses.setOnClickListener {
             val webView = android.webkit.WebView(this)
@@ -120,9 +100,6 @@ class AboutActivity : BaseActivity() {
             Utils.openUri(this, AppConfig.TG_CHANNEL_URL)
         }
 
-        binding.layoutPrivacyPolicy.setOnClickListener {
-            Utils.openUri(this, AppConfig.APP_PRIVACY_POLICY)
-        }
 
         "v${BuildConfig.VERSION_NAME} (${SpeedtestManager.getLibVersion()})".also {
             binding.tvVersion.text = it

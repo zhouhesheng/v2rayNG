@@ -1,5 +1,6 @@
 package com.v2ray.ang.handler
 
+
 import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -18,18 +19,14 @@ import com.v2ray.ang.service.ServiceControl
 import com.v2ray.ang.service.V2RayProxyOnlyService
 import com.v2ray.ang.service.V2RayVpnService
 import com.v2ray.ang.util.MessageUtil
-import java.io.IOException
-import java.net.HttpURLConnection
-import java.net.URL
-import java.util.concurrent.TimeUnit
-import com.v2ray.ang.handler.SettingsManager
 import com.v2ray.ang.util.Utils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-
-
+import java.io.IOException
 import java.lang.ref.SoftReference
+import java.net.HttpURLConnection
+import java.net.URL
 
 object V2RayServiceManager {
 
@@ -38,9 +35,6 @@ object V2RayServiceManager {
     private var running: Boolean = false
 
     var serviceControl: SoftReference<ServiceControl>? = null
-        set(value) {
-            field = value
-        }
 
     /**
      * Starts the V2Ray service from a toggle action.

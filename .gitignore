@@ -3,7 +3,7 @@
 *.jks
 
 # Ignore output JSON file
-V2rayNG/app/release/output.json
+V2rayNG/app/*/release/**
 
 # Ignore IDE and build system directories
 .idea/

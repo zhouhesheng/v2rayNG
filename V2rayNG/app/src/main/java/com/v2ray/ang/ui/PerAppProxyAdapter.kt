@@ -7,7 +7,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.v2ray.ang.databinding.ItemRecyclerBypassListBinding
 import com.v2ray.ang.dto.AppInfo
 
-class PerAppProxyAdapter(val activity: BaseActivity, val apps: List<AppInfo>, blacklist: MutableSet<String>?) :
+class PerAppProxyAdapter(
+    val activity: BaseActivity,
+    val apps: List<AppInfo>,
+    blacklist: MutableSet<String>?
+) :
     RecyclerView.Adapter<PerAppProxyAdapter.BaseViewHolder>() {
 
     companion object {
@@ -41,16 +45,24 @@ class PerAppProxyAdapter(val activity: BaseActivity, val apps: List<AppInfo>, bl
 //            VIEW_TYPE_ITEM -> AppViewHolder(ctx.layoutInflater
 //                    .inflate(R.layout.item_recycler_bypass_list, parent, false))
 
-            else -> AppViewHolder(ItemRecyclerBypassListBinding.inflate(LayoutInflater.from(ctx), parent, false))
+            else -> AppViewHolder(
+                ItemRecyclerBypassListBinding.inflate(
+                    LayoutInflater.from(ctx),
+                    parent,
+                    false
+                )
+            )
 
         }
     }
 
-    override fun getItemViewType(position: Int) = if (position == 0) VIEW_TYPE_HEADER else VIEW_TYPE_ITEM
+    override fun getItemViewType(position: Int) =
+        if (position == 0) VIEW_TYPE_HEADER else VIEW_TYPE_ITEM
 
     open class BaseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
-    inner class AppViewHolder(private val itemBypassBinding: ItemRecyclerBypassListBinding) : BaseViewHolder(itemBypassBinding.root),
+    inner class AppViewHolder(private val itemBypassBinding: ItemRecyclerBypassListBinding) :
+        BaseViewHolder(itemBypassBinding.root),
         View.OnClickListener {
         private val inBlacklist: Boolean get() = blacklist.contains(appInfo.packageName)
         private lateinit var appInfo: AppInfo

@@ -53,7 +53,11 @@ open class FmtBase {
      * @param queryParam the query parameters to use for populating the ProfileItem
      * @param allowInsecure whether to allow insecure connections
      */
-    fun getItemFormQuery(config: ProfileItem, queryParam: Map<String, String>, allowInsecure: Boolean) {
+    fun getItemFormQuery(
+        config: ProfileItem,
+        queryParam: Map<String, String>,
+        allowInsecure: Boolean
+    ) {
         config.network = queryParam["type"] ?: NetworkType.TCP.type
         config.headerType = queryParam["headerType"]
         config.host = queryParam["host"]
@@ -153,8 +157,12 @@ open class FmtBase {
 
             NetworkType.GRPC -> {
                 config.mode.let { if (it.isNotNullEmpty()) dicQuery["mode"] = it.orEmpty() }
-                config.authority.let { if (it.isNotNullEmpty()) dicQuery["authority"] = it.orEmpty() }
-                config.serviceName.let { if (it.isNotNullEmpty()) dicQuery["serviceName"] = it.orEmpty() }
+                config.authority.let {
+                    if (it.isNotNullEmpty()) dicQuery["authority"] = it.orEmpty()
+                }
+                config.serviceName.let {
+                    if (it.isNotNullEmpty()) dicQuery["serviceName"] = it.orEmpty()
+                }
             }
         }
 
@@ -167,11 +175,18 @@ open class FmtBase {
         }
 
         val domain = HttpUtil.toIdnDomain(profileItem.server.orEmpty())
-        if (MmkvManager.decodeSettingsString(AppConfig.PREF_OUTBOUND_DOMAIN_RESOLVE_METHOD, "1") != "2") {
+        if (MmkvManager.decodeSettingsString(
+                AppConfig.PREF_OUTBOUND_DOMAIN_RESOLVE_METHOD,
+                "1"
+            ) != "2"
+        ) {
             return domain
         }
         //Resolve and replace domain
-        val resolvedIps = HttpUtil.resolveHostToIP(domain, MmkvManager.decodeSettingsBool(AppConfig.PREF_PREFER_IPV6))
+        val resolvedIps = HttpUtil.resolveHostToIP(
+            domain,
+            MmkvManager.decodeSettingsBool(AppConfig.PREF_PREFER_IPV6)
+        )
         if (resolvedIps.isNullOrEmpty()) {
             return domain
         }

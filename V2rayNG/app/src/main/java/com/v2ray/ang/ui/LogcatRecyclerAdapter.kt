@@ -7,7 +7,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.v2ray.ang.AppConfig
 import com.v2ray.ang.databinding.ItemRecyclerLogcatBinding
 
-class LogcatRecyclerAdapter(val activity: LogcatActivity) : RecyclerView.Adapter<LogcatRecyclerAdapter.MainViewHolder>() {
+class LogcatRecyclerAdapter(val activity: LogcatActivity) :
+    RecyclerView.Adapter<LogcatRecyclerAdapter.MainViewHolder>() {
     private var mActivity: LogcatActivity = activity
 
 
@@ -21,8 +22,10 @@ class LogcatRecyclerAdapter(val activity: LogcatActivity) : RecyclerView.Adapter
                 holder.itemSubSettingBinding.logContent.text = ""
             } else {
                 val content = log.split("):", limit = 2)
-                holder.itemSubSettingBinding.logTag.text = content.first().split("(", limit = 2).first().trim()
-                holder.itemSubSettingBinding.logContent.text = if (content.count() > 1) content.last().trim() else ""
+                holder.itemSubSettingBinding.logTag.text =
+                    content.first().split("(", limit = 2).first().trim()
+                holder.itemSubSettingBinding.logContent.text =
+                    if (content.count() > 1) content.last().trim() else ""
             }
         } catch (e: Exception) {
             Log.e(AppConfig.TAG, "Error binding log view data", e)
@@ -39,6 +42,7 @@ class LogcatRecyclerAdapter(val activity: LogcatActivity) : RecyclerView.Adapter
         )
     }
 
-    class MainViewHolder(val itemSubSettingBinding: ItemRecyclerLogcatBinding) : RecyclerView.ViewHolder(itemSubSettingBinding.root)
+    class MainViewHolder(val itemSubSettingBinding: ItemRecyclerLogcatBinding) :
+        RecyclerView.ViewHolder(itemSubSettingBinding.root)
 
 }

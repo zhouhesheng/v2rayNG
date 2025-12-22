@@ -32,16 +32,6 @@ object MessageUtil {
     }
 
     /**
-     * Sends a message to the test service.
-     *
-     * @param ctx The context.
-     * @param what The message identifier.
-     * @param content The message content.
-     */
-    fun sendMsg2TestService(ctx: Context, what: Int, content: Serializable) {
-    }
-
-    /**
      * Sends a message with the specified action.
      *
      * @param ctx The context.

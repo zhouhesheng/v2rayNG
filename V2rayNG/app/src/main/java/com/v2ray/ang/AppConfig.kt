@@ -61,8 +61,7 @@ object AppConfig {
     const val PREF_INTELLIGENT_SELECTION_METHOD = "pref_intelligent_selection_method"
     const val PREF_MODE = "pref_mode"
     const val PREF_IS_BOOTED = "pref_is_booted"
-    const val PREF_CHECK_UPDATE_PRE_RELEASE = "pref_check_update_pre_release"
-    const val PREF_GEO_FILES_SOURCES = "pref_geo_files_sources"
+
     const val PREF_USE_HEV_TUNNEL = "pref_use_hev_tunnel"
     const val PREF_HEV_TUNNEL_LOGLEVEL = "pref_hev_tunnel_loglevel"
     const val PREF_HEV_TUNNEL_RW_TIMEOUT = "pref_hev_tunnel_rw_timeout"
@@ -90,9 +89,7 @@ object AppConfig {
     const val TAG_PROXY = "proxy"
     const val TAG_DIRECT = "direct"
     const val TAG_BLOCKED = "block"
-    const val TAG_FRAGMENT = "fragment"
-    const val TAG_DNS = "dns-module"
-    const val TAG_DOMESTIC_DNS = "domestic-dns"
+
 
     /** Network-related constants. */
     const val UPLINK = "uplink"

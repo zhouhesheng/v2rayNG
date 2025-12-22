@@ -91,33 +91,9 @@
             android:name=".ui.PerAppProxyActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.ScannerActivity"
-            android:exported="false" />
-        <activity
             android:name=".ui.LogcatActivity"
             android:exported="false" />
-        <activity
-            android:name=".ui.RoutingSettingActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.RoutingEditActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.SubSettingActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.UserAssetActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.UserAssetUrlActivity"
-            android:exported="false" />
 
-        <activity
-            android:name=".ui.SubEditActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.ScScannerActivity"
-            android:exported="false" />
         <activity
             android:name=".ui.ScSwitchActivity"
             android:excludeFromRecents="true"
@@ -125,28 +101,7 @@
             android:process=":RunSoLibV2RayDaemon"
             android:theme="@style/AppTheme.NoActionBar.Translucent" />
 
-        <activity
-            android:name=".ui.UrlSchemeActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.SEND" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="text/plain" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.BROWSABLE" />
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:scheme="v2rayng" />
-                <data android:host="install-config" />
-                <data android:host="install-sub" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".ui.CheckUpdateActivity"
-            android:exported="false" />
         <activity
             android:name=".ui.AboutActivity"
             android:exported="false" />
@@ -219,15 +174,6 @@
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="tile" />
         </service>
-        <!-- =====================Tasker===================== -->
-        <activity
-            android:name=".ui.TaskerActivity"
-            android:exported="true"
-            android:icon="@mipmap/ic_launcher">
-            <intent-filter>
-                <action android:name="com.twofortyfouram.locale.intent.action.EDIT_SETTING" />
-            </intent-filter>
-        </activity>
 
         <receiver
             android:name=".receiver.TaskerReceiver"
