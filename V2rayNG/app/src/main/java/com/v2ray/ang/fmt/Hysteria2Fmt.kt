@@ -49,6 +49,7 @@ object Hysteria2Fmt : FmtBase() {
         val bean = Hysteria2Bean(
             server = server,
             auth = config.password,
+            lazy = false,
             obfs = obfs,
             transport = transport,
             bandwidth = bandwidth,
@@ -56,7 +57,7 @@ object Hysteria2Fmt : FmtBase() {
                 listen = "$LOOPBACK:${socksPort}",
             ),
             http = Hysteria2Bean.Socks5Bean(
-                listen = "$LOOPBACK:${socksPort}",
+                listen = "$LOOPBACK:${socksPort+1}",
             ),
             tls = Hysteria2Bean.TlsBean(
                 sni = config.sni ?: config.server,

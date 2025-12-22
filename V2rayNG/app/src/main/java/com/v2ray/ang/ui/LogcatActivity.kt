@@ -149,6 +149,11 @@ class LogcatActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
         getLogcat()
     }
 
+    override fun onResume() {
+        super.onResume()
+        getLogcat()
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     fun refreshData() {
         adapter.notifyDataSetChanged()

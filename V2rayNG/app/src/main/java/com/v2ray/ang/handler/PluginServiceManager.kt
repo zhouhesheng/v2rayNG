@@ -103,7 +103,7 @@ object PluginServiceManager {
 
         configFile.parentFile?.mkdirs()
         configFile.writeText(JsonUtil.toJson(hy2Config))
-        Log.i(AppConfig.TAG, JsonUtil.toJson(hy2Config))
+        Log.d(AppConfig.TAG, JsonUtil.toJson(hy2Config))
 
         return configFile
     }
